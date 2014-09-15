@@ -1,0 +1,208 @@
+#{extends 'CRUD/layout.html' /}
+#{set title:messages.get('quadro kanban') /}
+<script type="text/javascript" src="@{'/public/javascripts/jquery-ui.min.js'}"></script>
+<script type="text/javascript" src="@{'/public/javascripts/jquery.qtip.min.js'}"></script>
+<link rel="stylesheet" media="screen" href="@{'/public/stylesheets/jquery.qtip.min.css'}">
+<style type="text/css">
+.droppable  {
+  float: left;
+  margin:0px 10px 10px 10px;
+  padding: 0px 10px 10px 10px;
+  width: 220px;
+  min-height:450px;
+  height:auto !important;
+  height:450px;
+  vertical-align: middle;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  border-radius: 8px;
+  background-color:#fff;
+  box-shadow: 1px 1px 4px 0 rgba(50, 50, 50, 0.25);
+  border: 1px solid #ccc;
+
+}
+
+.droppable a {
+	font-size: 12px;
+  	text-decoration: none;
+  	color:  #000;
+}
+
+.droppable a img {
+  margin-left: 10px;
+}
+
+.draggable, .draggableInativo {
+  font-size: 11px;
+  width: 100%;
+  min-height: 32px;
+  height: auto!important;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  background-color:#DAE8F1;
+  -webkit-box-shadow: #B3B3B3 1px 1px 1px;
+  -moz-box-shadow: #B3B3B3 1px 1px 1px;
+  box-shadow: #B3B3B3 1px 1px 1px;
+  margin-bottom:12px;
+  min-height:32px;
+  padding:4px 3px 4px 5px;
+  text-align:left;
+  width:95%;
+  display: inline-block;
+  display: block;
+}
+
+.draggableInativo {
+  background-color:#EAEAEA;
+}
+
+.red {
+ border-left: 4px solid #E7C839;
+}
+
+.green {
+ border-left: 4px solid #E7C839;
+}
+
+.grey {
+ border-left: 4px solid #E7C839;
+}
+
+
+
+.draggable .draggableInativo p {
+  padding: 5px;
+  width: 100%;
+}
+</style>
+<script type="text/javascript">
+	$(function() {
+		
+		$('a').qtip({ // Grab some elements to apply the tooltip to
+		    content: {
+		        text: 'My common piece of text here'
+		    }
+		})
+	    $(".draggable").draggable({ revert: 'invalid'});
+	
+	$(".droppable").droppable({
+	    accept: '.draggable',
+	    drop: function(event, ui) {
+	        $(this).append($(ui.helper));
+	        $(".draggable").addClass("item"); 
+	        $(".item").removeAttr("style");
+	        $(".item").draggable({
+	            revert: 'invalid'
+	        });
+	        var tipoSituacao;
+	        if ($(this).attr("name") == "list-c"){
+	        	tipoSituacao = "${dominio.TipoSituacaoAtividadeEnum.IMPEDIDO.ordinal()}";
+	        } else if ($(this).attr("name") == "list-a"){
+	        	tipoSituacao = "${dominio.TipoSituacaoAtividadeEnum.A_FAZER.ordinal()}";
+	        } else if ($(this).attr("name") == "list-b"){
+	        	tipoSituacao = "${dominio.TipoSituacaoAtividadeEnum.EM_PROGRESSO.ordinal()}";
+	        } else {
+	        	tipoSituacao = "${dominio.TipoSituacaoAtividadeEnum.FINALIZADA.ordinal()}";
+	        }
+	        var listAction = #{jsAction @publico.AtividadeRestService.atualizaSituacao(':idAtividade', ':situacao') /}
+	        $.ajax({
+                type: "POST",
+                url:  listAction({idAtividade: $(ui.draggable).attr("idAtividade"), situacao: tipoSituacao})
+                //success: function (data) {
+                    //alert("foi");
+                //}
+            });	        
+	        console.log( $(ui.draggable).attr("idAtividade"));
+	        console.log( $(this).attr("name"));
+	        console.log( $(this).attr("class"));
+	        console.log( $(".draggable"));
+	    }
+	});
+	});
+</script>
+<div id="crudBlank">
+   <div class="objectForm">
+    #{form action:@Kanban.exibirQuadro(), enctype:'multipart/form-data'}
+		<div class="crudField crud_text" style="display: inline-block;">
+			<span class="formulariotxt">
+				<label for="addressType" style="width: 80px;">
+            		&{'projeto'}:
+        		</label>
+        	</span>
+			#{select 'idProjeto', class:'combobox', onchange:'this.form.submit()', style:'background-color: #fff', value:idProjeto}
+				#{option value: ''}&{'crud.selectValue'}#{/option}
+				#{list items:lstProjeto, as:'projeto'}
+					#{option projeto.id}${projeto}#{/option}
+				#{/list}
+			#{/select}
+		</div>
+		<div class="crudField crud_text" style="display: inline-block;">
+			<span class="formulariotxt">
+				<label for="addressType" style="width: 80px;">
+            		&{'iteracao'}:
+        		</label>
+        	</span>
+			#{select 'idIteracao', class:'combobox', onchange:'this.form.submit()', style:'background-color: #fff', value:idIteracao}
+				#{option value: ''}&{'crud.selectValue'}#{/option}
+				#{list items:lstIteracao, as:'iteracao'}
+					#{option iteracao.id}${iteracao}#{/option}
+				#{/list}
+			#{/select}
+		</div>
+    #{/form}
+    </div>
+<br/>
+	<div name="list-a" class="droppable">
+	  <h3 style="color: #7aa93c; font-weight: normal; font-family: sans-serif,Arial,sans-serif; margin-top:10px; font-size: 16px; border-bottom: 1px dotted black; text-align: center; padding-bottom: 15px;">A fazer</h3>
+	  <div class="task-wrapper">
+		#{list items:lstAtividade, as:'atividade'}
+			#{if atividade.situacao == dominio.TipoSituacaoAtividadeEnum.A_FAZER}
+		      <div class="${atividade.usuario?.login == session.username ? 'draggable' : 'draggableInativo'} ${atividade.tipoAtividade == dominio.TipoAtividadeEnum.BUG ? 'red' : atividade.tipoAtividade == dominio.TipoAtividadeEnum.NOVA_FUNCIONALIDADE ? 'green' : 'grey'}" idAtividade="${atividade.id}" id="AF${atividade_index}" name="AF${atividade_index}">
+		          <a href="#">${atividade}</a><br/><b>Tipo</b>: ${atividade.tipoAtividade}<br/>
+		          #{if atividade.usuario }<img src="@{'/public/images/icon_check.png'}" height="13px" width="13px" />&nbsp;${atividade.usuario}#{/if}
+		      </div>
+			#{/if}
+		#{/list}
+	  </div>
+	</div>
+	<div name="list-b" class="droppable">
+	  <h3 style="color: #7aa93c; font-weight: normal; font-family: sans-serif,Arial,sans-serif; margin-top:10px; font-size: 16px; border-bottom: 1px dotted black; text-align: center; padding-bottom: 15px;">Em progresso</h3>
+	  <div class="task-wrapper">
+		#{list items:lstAtividade, as:'atividade'}
+			#{if atividade.situacao == dominio.TipoSituacaoAtividadeEnum.EM_PROGRESSO}
+		      <div class="${atividade.usuario?.login == session.username ? 'draggable' : 'draggableInativo'} ${atividade.tipoAtividade == dominio.TipoAtividadeEnum.BUG ? 'red' : atividade.tipoAtividade == dominio.TipoAtividadeEnum.NOVA_FUNCIONALIDADE ? 'green' : 'grey'}" idAtividade="${atividade.id}" id="EP${atividade_index}" name="EP${atividade_index}">
+		          <a href="#">${atividade}</a><br/><b>Tipo</b>: ${atividade.tipoAtividade}<br/>
+		          <img src="@{'/public/images/icon_check.png'}" height="13px" width="13px" />&nbsp;${atividade.usuario}
+		      </div>
+			#{/if}
+		#{/list}
+	  </div>
+	</div>
+	<div name="list-c" class="droppable">
+	  <h3 style="color: #7aa93c; font-weight: normal; font-family: sans-serif,Arial,sans-serif; margin-top:10px; font-size: 16px; border-bottom: 1px dotted black; text-align: center; padding-bottom: 15px;">Impedido</h3>
+	  <div class="task-wrapper">
+		#{list items:lstAtividade, as:'atividade'}
+			#{if atividade.situacao == dominio.TipoSituacaoAtividadeEnum.IMPEDIDO}
+		      <div class="${atividade.usuario?.login == session.username ? 'draggable' : 'draggableInativo'} ${atividade.tipoAtividade == dominio.TipoAtividadeEnum.BUG ? 'red' : atividade.tipoAtividade == dominio.TipoAtividadeEnum.NOVA_FUNCIONALIDADE ? 'green' : 'grey'}" idAtividade="${atividade.id}" id="IM${atividade_index}" name="IM${atividade_index}">
+		          <a href="#">${atividade}</a><br/><b>Tipo</b>: ${atividade.tipoAtividade}<br/>
+		          <img src="@{'/public/images/icon_check.png'}" height="13px" width="13px" />&nbsp;${atividade.usuario}
+		      </div>
+			#{/if}
+		#{/list}
+	  </div>
+	</div>
+	<div name="list-d" class="droppable">
+	  <h3 style="color: #7aa93c; font-weight: normal; font-family: sans-serif,Arial,sans-serif; margin-top:10px; font-size: 16px; border-bottom: 1px dotted black; text-align: center; padding-bottom: 15px;">Finalizadas</h3>
+	  <div class="task-wrapper">
+		#{list items:lstAtividade, as:'atividade'}
+			#{if atividade.situacao == dominio.TipoSituacaoAtividadeEnum.FINALIZADA}
+		      <div class="${atividade.usuario?.login == session.username ? 'draggable' : 'draggableInativo'} ${atividade.tipoAtividade == dominio.TipoAtividadeEnum.BUG ? 'red' : atividade.tipoAtividade == dominio.TipoAtividadeEnum.NOVA_FUNCIONALIDADE ? 'green' : 'grey'}" idAtividade="${atividade.id}" id="FI{atividade_index}" name="FI${atividade_index}">
+		          <a href="#">${atividade}</a><br/><b>Tipo</b>: ${atividade.tipoAtividade}<br/>
+		          <img src="@{'/public/images/icon_check.png'}" height="13px" width="13px" />&nbsp;${atividade.usuario}
+		      </div>
+			#{/if}
+		#{/list}
+	  </div>
+	</div>
+</div>

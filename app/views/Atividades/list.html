@@ -1,0 +1,23 @@
+#{extends 'CRUD/layout.html' /}
+#{set title:messages.get('crud.list.title', type.name) /}
+<div id="crudList" class="${type.name}">
+    <div id="crudListSearch" style="display: inline-block; vertical-align: top;">
+        #{crud.search /}
+    </div>
+    <div style="display: inline-block; margin-bottom: 10px; vertical-align: top;">
+    	<a href="@{blank()}" class="btn btn-sm btn-success">&{'crud.add', type.modelName}</a>
+    </div>
+    <div id="crudListTable">
+        #{crud.table fields:['titulo','backLog.iteracao.projeto', 'backLog.iteracao']}
+			#{crud.custom 'backLog.iteracao.projeto'}
+                ${object.backLog.iteracao.projeto}
+			 #{/crud.custom}
+			#{crud.custom 'backLog.iteracao'}
+                ${object.backLog.iteracao}
+			 #{/crud.custom}
+		#{/crud.table}
+    </div>
+    <div id="crudListPagination">
+        #{crud.pagination /}
+    </div>
+</div>

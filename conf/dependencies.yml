@@ -1,0 +1,15 @@
+# Application dependencies
+
+require:
+    - play
+    - play -> crud
+    - play -> secure
+    - commons-digester -> commons-digester 2.1
+    - net.sf.jasperreports -> jasperreports 5.5.2:
+        transitive: false
+    - com.lowagie -> itext 2.1.7:
+        transitive: false
+    - org.jfree -> jfreechart 1.0.18:
+        transitive: false
+    - org.jfree -> jcommon 1.0.23:
+        transitive: false

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>#{get 'title' /}</title>
+        <link rel="shortcut icon" href="@{'/public/images/favicon.ico'}"/>
+        <meta charset="${_response_encoding}">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/main.css'}">
+        <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/menu.css'}">
+        #{get 'moreStyles' /}
+        <script src="@{'/public/javascripts/jquery-1.11.1.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+        <script src="@{'/public/javascripts/dropdown.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+        <script type="text/javascript" src="@{'/public/javascripts/toastr.js'}"></script>
+        <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/toastr.css'}" />
+        
+        <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+        <script type="text/javascript" src="@{'/public/javascripts/timeline.js'}"></script>
+        <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/timeline.css'}" />
+        <script type="text/javascript" src="@{'/public/javascripts/zebra_dialog.js'}"></script>
+        <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/zebra_dialog.css'}" />
+        <script type="text/javascript" src="@{'/public/javascripts/jquery.ddslick.min.js'}"></script>
+        
+        #{get 'moreScripts' /}
+    </head>
+    <body>
+        #{doLayout /}
+    </body>
+</html>

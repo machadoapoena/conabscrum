@@ -1,0 +1,83 @@
+# You can specialize this file for each language.
+# For example, for French create a messages.fr file
+#
+################# LABEL ######################
+nome=Nome
+object.nome=Nome
+descricao=Descrição
+gerente=Gerente
+scrumMaster=Scrum Master
+usuario=Usuario
+senha=Senha
+dataInicial=Data Inicial
+dataFinal=Data Final
+objetivo=Objetivo
+ativo=Ativo
+projeto=Projeto
+iteracao=Iteração
+titulo=Título
+tipoAtividade=Tipo
+iteracao.projeto=Projeto
+situacao=Situação
+backLog=Backlog
+avatar=Avatar
+perfil=Perfil
+login=Login
+backLog.iteracao.projeto=Projeto
+backLog.iteracao=Iteração
+
+menu.favoritos=Favoritos
+menu.verTodos=ver todos
+menu.acoes=Ações
+menu.novo=Novo
+menu.listar=Listar
+menu.kanban=Kanban
+
+################# MENSAGENS DO CRUD ######################
+crud.title=Conab Scrum
+crud.home=Início
+crud.blank=Novo
+crud.index.title=Escolha o objeto para editar
+crud.index.objectType=Tipo do Objeto
+crud.index.action=
+crud.index.add=Adicionar
+crud.add=Adicionar &{%s}
+crud.list.title=&{%s}
+crud.list.size=%d &{%s}
+crud.list.totalSize=%d total
+crud.pagination.previous=« Anterior
+crud.pagination.next=Próximo »
+crud.pagination.last=Último »»
+crud.pagination.first=«« Primeiro
+crud.show.title=Editar &{%s}
+crud.save=Salvar
+crud.saveAndContinue=Salvar e continuar editando
+crud.cancel=Cancelar
+crud.hasErrors=Corrija os erros
+crud.blank.title=Adicionar &{%s}
+crud.saveAndAddAnother=Salvar e criar um novo
+crud.delete=Excluir &{%s}
+crud.created=O &{%s} foi criado
+crud.saved=O &{%s} foi salvo
+crud.deleted=O &{%s} foi excluído
+crud.delete.error=Não é possível excluir o objeto
+crud.search=Pesquisar
+crud.none=(Nenhum)
+crud.selectValue=(Selecione um valor)
+crud.help.dateformat=&{%s} formato.
+crud.back=Voltar
+
+################# VALIDAÇÔES ######################
+validation.required=Obrigatório.
+validation.minSize=O tamanho do %s deve ser maior ou igual a %d
+validation.maxSize=O tamanho do %s deve ser menor ou igual a %d
+crud.help.required=Obrigatório.
+crud.help.minlength=Tamanho minimo é %d.
+crud.help.maxlength=Tamanho máximo é %d.
+crud.help.email=Email válido.
+validation.email=Endereço de email inválido.
+msg.erro.geracao.relatorio=falha ao gerar relatorio
+msg.info.geracao.relatorio.vazio=Não foi encontrado dados para geração do relatório
+
+secure.error=Opa! Usuário ou Senha inválidos
+secure.logout=Logout encerrado com sucesso

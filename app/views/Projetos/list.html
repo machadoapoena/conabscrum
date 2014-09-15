@@ -1,0 +1,29 @@
+#{extends 'CRUD/layout.html' /}
+#{set title:messages.get('crud.list.title', type.name) /}
+
+<div id="crudList" class="${type.name}">
+     <div id="crudListSearch" style="display: inline-block; vertical-align: top;">
+        #{crud.search /}
+    </div>
+    <div style="display: inline-block; margin-bottom: 10px; vertical-align: top;">
+    	<a href="@{blank()}" class="btn btn-sm btn-success">&{'crud.add', type.modelName}</a>
+    </div>
+    <div id="crudListTable">
+        #{crud.table fields:['nome', 'gerente', 'scrumMaster', 'ativo'], sort:['nome', 'gerente', 'scrumMaster']}
+	         #{crud.custom 'ativo'}
+	         	#{if object.ativo}
+	         		<img title="Ativo" src="@{'/public/images/icon_ativado.png'}" height="16px" width="16px"/>
+	         	#{/if}
+	         	#{else}
+	         		<img title="Ativo" src="@{'/public/images/icon_desativado.png'}" height="16px" width="16px"/>
+	         	#{/else}
+			 #{/crud.custom}
+	         #{crud.custom 'iteracao.projeto'}
+                ${object.iteracao.projeto}
+			 #{/crud.custom}
+		#{/crud.table}
+    </div>
+    <div id="crudListPagination">
+        #{crud.pagination /}
+    </div>
+</div>

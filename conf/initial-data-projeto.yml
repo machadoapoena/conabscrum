@@ -1,0 +1,18 @@
+Projeto(sigpaa):
+    nome: "Sigpaa"
+    descricao: Projeto de atividades do Sigpaa
+    ativo: true
+    gerente: [hatano]
+    scrumMaster: [cristiano]
+Projeto(sicarm):
+    nome: "Sicarm"
+    descricao: Projeto de atividades do Sicarm
+    ativo: true
+    gerente: [hatano]
+    scrumMaster: [aristides]
+Projeto(siagro):
+    nome: "Siagro"
+    descricao: Projeto de atividades do Siagro
+    ativo: true
+    gerente: [hatano]
+    scrumMaster: [feitosa]

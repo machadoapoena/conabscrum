@@ -1,0 +1,24 @@
+Iteracao(iteracao1):
+    nome: "Iteracao 01"
+    descricao: Primeira Iteracao
+    dataInicial: 29/07/2014
+    dataFinal: 29/08/2014
+    objetivo: xxxxxxxxxxxxxxxxxxxxxxx
+    ativo: true
+    projeto: [sigpaa]
+Iteracao(iteracao2):
+    nome: "Iteracao 02"
+    descricao: Segunda Iteracao
+    dataInicial: 01/09/2014
+    dataFinal: 28/09/2014
+    objetivo: xxxxxxxxxxxxxxxxxxxxxxx
+    ativo: true
+    projeto: [sigpaa]
+Iteracao(iteracao3):
+    nome: "Iteracao 01"
+    descricao: Primeira Iteracao
+    dataInicial: 01/01/2014
+    dataFinal: 28/01/2014
+    objetivo: xxxxxxxxxxxxxxxxxxxxxxx
+    ativo: true
+    projeto: [siagro]

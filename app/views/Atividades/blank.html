@@ -1,0 +1,67 @@
+#{extends 'CRUD/layout.html' /}
+#{set title:messages.get('crud.blank.title', type.modelName) /}
+<div id="crudBlank" class="${type.name}">
+    <div class="objectForm">
+    #{form action:@create(), enctype:'multipart/form-data'}
+        #{crud.form}
+			#{crud.custom 'backLog'}
+					<span class="formulariotxt">
+						<label for="backLog">
+		            		&{'backLog'}
+		        		</label>
+		        	</span>
+					#{select 'object.backLog.id', class:'combobox', value:object.backLog?.id}
+						#{option}&{'crud.selectValue'}#{/option}
+						#{if controllers.Seguranca.isScrumMaster()}
+							#{set list:models.Backlog.recuperaBacklogsPorLoginScrumMaster(session.username)/}
+						#{/if}
+						#{if controllers.Seguranca.isGerente()}
+							#{set list:models.Backlog.recuperaBacklogsPorLoginGerente(session.username)/}
+						#{/if}
+						#{if controllers.Seguranca.isGestor()}
+							#{set list:models.Backlog.findAll()/}
+						#{/if}
+						#{list items:list, as:'backlog'}
+							#{option backlog.id}${backlog}#{/option}
+						#{/list}
+					#{/select}
+				    #{ifError 'object.backLog'}
+				        <span class="error">#{error 'object.backLog' /}</span>
+				    #{/ifError}
+				    <br />
+					<span class="crudHelp">&{'crud.help.required'}</span>
+			#{/crud.custom}
+			#{crud.custom 'usuario'}
+					<span class="formulariotxt">
+						<label for="usuario">
+		            		&{'usuario'}
+		        		</label>
+		        	</span>
+					#{select 'object.usuario.id', class:'combobox', value:object.usuario?.id}
+						#{option}&{'crud.selectValue'}#{/option}
+						#{if controllers.Seguranca.isDesenvolvedor()}
+							#{set list:models.Usuario.recuperaUsuariosPorLogin(session.username)/}
+						#{/if}
+						#{else}
+							#{set list:models.Usuario.findAll()/}
+						#{/else}
+						#{list items:list, as:'usuario'}
+							#{option usuario.id}${usuario}#{/option}
+						#{/list}
+					#{/select}
+				    #{ifError 'object.usuario'}
+				        <span class="error">#{error 'object.usuario' /}</span>
+				    #{/ifError}
+				    <br />
+					<span class="crudHelp">&{'crud.help.required'}</span>
+			#{/crud.custom}
+		 #{/crud.form}
+        <p class="crudButtons" style="position: fixed; left:0px; right:0px; bottom: 0px;">
+            <input type="submit" name="_save" value="&{'crud.save', type.modelName}" />
+            <input type="submit" name="_saveAndContinue" value="&{'crud.saveAndContinue', type.modelName}" />
+            <input type="submit" name="_saveAndAddAnother" value="&{'crud.saveAndAddAnother', type.modelName}" />
+            <input type="submit" name="_voltar" onclick="method='GET';action='@{list()}'" value="&{'crud.back', type.modelName}" />
+        </p>
+    #{/form}
+    </div>
+</div>

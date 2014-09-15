@@ -1,0 +1,38 @@
+<html>
+	<body>
+		<table style="border: 1px dotted #666; color: black; font-family: Verdana; font-size: 12px;">
+			<tr style="border-bottom: 1px dotted #666;">
+				<td width="100px">
+					<b>Projeto:</b>
+				</td>
+				<td width="250px">
+					${atividade.backLog.iteracao.projeto}
+				</td>
+			</tr>
+			<tr style="border-bottom: 1px dotted #666;">
+				<td>
+					<b>Iteração:</b>
+				</td>
+				<td width="150px">
+					${atividade.backLog.iteracao}
+				</td>
+			</tr>
+			<tr style="border-bottom: 1px dotted #666;">
+				<td valign="top">
+					<b>Tipo:</b>
+				</td>
+				<td width="150px">
+					${atividade.tipoAtividade.getLabel()}
+				</td>
+			</tr>
+			<tr style="border-bottom: 1px dotted #666;">
+				<td valign="top">
+					<b>Atividade:</b>
+				</td>
+				<td width="150px" style="color: #888">
+					<b style="color: #174574">${atividade}</b><br/><i>${atividade.descricao}</i>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>

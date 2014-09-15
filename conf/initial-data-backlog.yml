@@ -1,0 +1,20 @@
+Backlog(backlog1):
+    titulo: "PAA-Atendimento ao usuario"
+    descricao: Atendimento as solicitacoes de usuarios no ambiente de producao.
+    ativo: true
+    iteracao: [iteracao1]
+Backlog(backlog2):
+    titulo: "PAA-Manutencao Programacao Orcamentaria e Financeira"
+    descricao: Melhoria de desempenho solicitada pela SUPAF/GECAF. Ordenacao do resultado da consulta de Programacao Orcamentaria em Execucao Alteracao na consulta de programacao orcamentaria ao tentar Gerar CPR
+    ativo: true
+    iteracao: [iteracao1]
+Backlog(backlog3):
+    titulo: "PAA-Filtrar UF Proposta"
+    descricao: Filtrar a consulta de proposta (DF) somente quando usuario for Tecnico Operacional do DF
+    ativo: true
+    iteracao: [iteracao1]
+Backlog(backlog4):
+    titulo: "SIA- Modulo PGPAF"
+    descricao: Criacao do modulo de pgpaf
+    ativo: true
+    iteracao: [iteracao3]

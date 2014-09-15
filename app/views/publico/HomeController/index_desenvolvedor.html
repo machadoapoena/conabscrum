@@ -1,0 +1,357 @@
+#{extends 'layout.html' /}
+#{set title:'Home' /}
+<script type="text/javascript">
+
+toastr.options = {
+		  "closeButton": true,
+		  "debug": false,
+		  "positionClass": "toast-bottom-right",
+		  "onclick": null,
+		  "showDuration": "300",
+		  "hideDuration": "1000",
+		  "timeOut": "13000",
+		  "extendedTimeOut": "1000",
+		  "showEasing": "swing",
+		  "hideEasing": "linear",
+		  "showMethod": "fadeIn",
+		  "hideMethod": "fadeOut"
+		}
+
+	var listAction = #{jsAction @publico.ProjetoRestService.getQuantidade() /}
+	function getQtdProjetos() {
+	    $.get("/conabscrum/projeto/quantidade.json", function(data) {
+	    	$("#id_qtd_projetos").html("0"+data);
+	        //$.each(data, function(index, item) {
+	        	//alert(index);
+	        	//alert(item);
+	           // $("#bars").append("<li>Bar " + item.name + "</li>");
+	       // });
+	    });
+	}
+    function getAtividadesEmProgresso() {
+    	$("#id_box_atividade").find("li").not(':first').remove();
+    	//$("#id_box_atividade").find("li").not(':first').not(':last').remove();    	
+    	$("#id_img_ajax_loader_atividade").css("display","block");
+        $.get("/conabscrum/webservice/atividade/atividadeEmProgresso.json", function(data) {
+            $.each(data, function(index, item) {
+            	var $tableBody = $('#id_box_atividade').find("li:last");
+            	var $tableBodyFirst = $('#id_box_atividade').find("li:first");
+            	$trNew = $tableBodyFirst.clone();
+            	$trNew.children("#id_linha_atividade_projeto").text(item.nomeProjeto);
+            	$trNew.children("#id_linha_atividade_nome").text(item.titulo);
+            	$trNew.children("#id_linha_atividade_usuario").text(item.nomeUsuario);
+            	$trNew.hide().fadeIn('slow');
+            	$tableBody.after($trNew);
+            	//$trNew.show();
+               //$("#bars").append("<li>Bar " + item.name + "</li>");
+           	});
+            $("#id_img_ajax_loader_atividade").css("display","none");
+        });
+        //toastr.info(Math.floor((Math.random() * 10) + 1)+" Mensagens Novas", "ConabScrum");
+    }
+    function getUsuariosSemAtividade() {
+    	$("#id_box_usuario_semDemanda").find("li").not(':first').remove();
+    	//$("#id_img_ajax_loader_usuario_semDemanda").css("display","block");
+        $.get("/conabscrum/webservice/usuario/usuariosSemAtividade.json", function(data) {
+            $.each(data, function(index, item) {
+            	var $tableBody = $('#id_box_usuario_semDemanda').find("li:last");
+            	var $tableBodyFirst = $('#id_box_usuario_semDemanda').find("li:first");
+            	$trNew = $tableBodyFirst.clone();
+            	$trNew.children("#id_linha_usuario_semDemanda_nome").text(item.nome);
+            	$trNew.children().children("#id_linha_usuario_semDemanda_qtdAtividadeFinalizadas").text(item.qtdAtividadeFinalizadas);
+            	$trNew.hide().fadeIn('slow');
+            	$tableBody.after($trNew);
+           	});
+            //$("#id_img_ajax_loader_usuario_semDemanda").css("display","none");
+        });
+    }
+    function recuperaIteracoesVencendo() {
+    	$("#id_box_iteracao_vencendo").find("li").not(':first').remove();
+        $.get("/conabscrum/webservice/iteracao/iteracoesVencendo.json", function(data) {
+            $.each(data, function(index, item) {
+            	var $tableBody = $('#id_box_iteracao_vencendo').find("li:last");
+            	var $tableBodyFirst = $('#id_box_iteracao_vencendo').find("li:first");
+            	$trNew = $tableBodyFirst.clone();
+            	$trNew.children("#id_linha_iteracao_vencendo_nomeProjeto").text(item.nomeProjeto);
+            	$trNew.children("#id_linha_iteracao_vencendo_nome").text(item.nome);
+            	$trNew.children("#id_linha_iteracao_vencendo_qtdDiasRestantesFim").text(item.qtdDiasRestantesFim);
+            	$trNew.children("#id_linha_iteracao_vencendo_dataFinal").text(item.dataFinalFormatad);
+            	$trNew.hide().fadeIn('slow');
+            	$tableBody.after($trNew);
+           	});
+        });
+    }    
+    
+$(document).ready(function() {
+	getQtdProjetos();
+    getAtividadesEmProgresso();
+    getUsuariosSemAtividade();
+    recuperaIteracoesVencendo();
+	setInterval(getAtividadesEmProgresso, 10000);
+	setInterval(recuperaIteracoesVencendo, 15000);
+});   
+</script>
+<style>
+ div.green {
+            background-color: #E14F4E;
+            border-color: #E14F4E;
+        }
+</style>
+<script type="text/javascript">
+        var timeline;
+
+        google.load("visualization", "1");
+
+        // Set callback to run when API is loaded
+        google.setOnLoadCallback(drawVisualization);
+
+        // Called when the Visualization API is loaded.
+        function drawVisualization() {
+            // Create and populate a data table.
+            var data = new google.visualization.DataTable();
+            data.addColumn('datetime', 'start');
+            data.addColumn('datetime', 'end');
+            data.addColumn('string', 'content');
+            data.addColumn('string', 'className');
+
+            data.addRows([
+                [new Date(2010,7,23), , 'Sigpaa - Produção<br>Manter Exec. Orçam. e Financeira do PAA<br>Apoen Oliveira Machado',''],
+                [new Date(2010,7,23,23,0,0), , '<b>Entrega de Produto:</b> SISCOI V2.0', 'green'],
+                [new Date(2010,7,24,16,0,0), , 'Relatorio Semanal',''],
+                [new Date(2010,7,26), new Date(2010,8,2), 'Sigpaa Produção - Iteração 01',''],
+                [new Date(2010,7,28), , 'Sigpaa - Produção<br>Manter Exec. Orçam. e Financeira do PAA<br>Apoen Oliveira Machado',''],
+                [new Date(2010,7,29), , 'Sigpaa - Produção<br>Manter Exec. Orçam. e Financeira do PAA<br>Apoen Oliveira Machado',''],
+                [new Date(2010,7,31), new Date(2010,8,3), 'Sigpaa Produção - Iteração 02',''],
+                [new Date(2010,8,4,12,0,0), , 'Relatorio Mensal','']
+            ]);
+
+            // specify options
+            var options = {
+                "width":  "100%",
+                "height": "150px",
+                "style": "box"
+            };
+
+            // Instantiate our timeline object.
+            timeline = new links.Timeline(document.getElementById('mytimeline'), options);
+
+            // Draw our timeline with the created data and options
+            timeline.draw(data);
+            
+            
+        }
+			
+
+		function abrirFuncionalidade(url, titulo) {
+        	new $.Zebra_Dialog('', {
+        	     source:  {'iframe': {
+        	    	'src': url, 
+        	    	'height': 500
+        	     }}, 
+        	     width: 1200,
+        	     'buttons':  false,
+        	     title: titulo
+        	});
+		}
+		
+		function crudSalvar(){
+			$(document).find('iframe').contents().find("input[name='_save']").click();
+		}
+		function crudSalvarContinuarEditando(){
+			$(document).find('iframe').contents().find("input[name='_saveAndContinue']").click();
+		}
+		function crudSalvarCriarOutro(){
+			$(document).find('iframe').contents().find("input[name='__saveAndAddAnother']").click();
+		}
+    </script>
+    
+<div class="container">
+	<div style="margin-bottom: 10px; display: inline-block; vertical-align: top">
+		<img src="@{'/public/images/img_conabscrum.png'}"/>
+	</div>
+	<div style="margin-bottom: 10px; margin-top: 10px; display: inline-block; float: right; vertical-align: top">
+		<select id="demo-htmlselect"></select>
+	    <script>
+		    var ddBasic = [
+		           		#{list items:models.Projeto.findAll(), as:'projeto' }
+		           			#{if product_isLast}
+		           				{ text: "${projeto}", value: 4, }
+		           			#{/if}
+		           			#{else}
+		           			{ text: "${projeto}", value: ${projeto.id}, },
+		           			#{/else}
+		    	    	#{/list}		                   
+		               ];
+             $('#demo-htmlselect').ddslick({
+                 data: ddBasic,
+                 background: '#ffffff',
+                 selectText: "Selecione o projeto",
+                 onSelected: function(selectedData){
+                    alert(selectedData);
+                 }   
+             });    
+	    </script>
+	</div>
+	<div style="width: 100%; color: #fff; height: 5px; background-color: #8BBF61;"></div>
+	<header class="header">
+			<nav>
+				<ul>
+					<li>
+						<a href="#" title="Home">Home</a>
+					</li>
+					<li class="dropdown">
+						<a class="ddIcon" href="#" title="Products">Projetos</a>
+						<div class="subNav">
+							<div class="navSection">
+								<h4><a href="#"> Favoritos<span>(view all)</span></a></h4>
+								<a href="" title="">Sigpaa Produção</a>
+								<a href="" title="Apple Iphone 3gs">Sigpaa Comunicação</a>
+								<a href="" title="Google Nexus">Siagro</a>
+								<a href="" title="Apple Iphone 4S">Apple Iphone 4S</a>
+							</div>
+							<div class="navSection">
+								<h4><a href="#"> Ações <span>(view all)</span></a></h4>
+								<a href="" title="Novo Projeto">Novo</a>
+								<a href="" title="Apple IPAD">Excluir</a>
+								<a href="" title="Amazon Kindle">Editar</a>
+							</div>
+						</div>
+					</li>
+					<li class="dropdown">
+						<a class="ddIcon" href="#" title="Iterações">Iterações</a>
+						<div class="subNav">
+							<div class="navSection">
+								<h4><a href="#"> Ações <span>(view all)</span></a></h4>
+								<a href="" title="Novo Projeto">Novo</a>
+								<a href="" title="Apple IPAD">Excluir</a>
+								<a href="" title="Amazon Kindle">Editar</a>
+							</div>
+						</div>
+					</li>
+					<li class="dropdown">
+						<a class="ddIcon" href="#" title="Relatorios">Relatorios</a>
+						<div class="subNav">
+							<div class="navSection">
+								<h4><a href="#"> Gerencial<span>(view all)</span></a></h4>
+								<a href="" title="">Projetos em Andamento</a>
+								<a href="" title="Apple Iphone 3gs">Projetos Finalizados</a>
+								<a href="" title="Google Nexus">Backlogs do projeto</a>
+								<a href="" title="Apple Iphone 4S">Situação dos Backlogs</a>
+								<a href="" title="Apple Iphone 4S">Historico Iterações</a>
+								<a href="" title="Apple Iphone 4S">Usuários sem demanda</a>
+							</div>
+						</div>
+					</li>
+					<li class="dropdown">
+						<a class="ddIcon" href="#" title="Services">Serviços</a>
+							<div class="subNav">
+								<div class="navSection">
+									<h4><a href="#">Programados</a></h4>
+									<a href="" title="">Limpeza base de dados</a>
+								</div>
+								<div class="navSection">
+									<h4><a href="#"> Otimização</a></h4>
+									<a href="" title="Google Nexus 7">Code Optimization</a>
+									<a href="" title="Apple IPAD">Outbound Linking</a>
+								</div>
+
+						</div></li>
+					<li><a href="#" title="Contato">Contato</a></li>
+					<li>
+						<a href="#" title="Home">Perfil</a>
+					</li>					
+				</ul>
+			</nav>
+	</header><!-- / .header -->
+	<section class="section" style="padding-left: 0px">
+		<article>
+			<header>
+				<div style="display: inline-block;">
+					<p style="color: #666; display: block; font-family: Open Sans,sans-serif; font-size: 25px; font-weight: 300; letter-spacing: -1px; margin: 0 0 15px; padding: 0;">
+						Gerenciamento Scrum
+					</p>
+				</div>
+			</header>
+		</article>
+		<div id="mytimeline"></div><br>
+		<div style="vertical-align:top; display: inline-block; border: 1px solid #D4D4D4; padding: 40px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; background-color: #fff">
+			<h1 style="font-size: 60px; padding: 0; margin: 0; color: #174574" id="id_qtd_projetos"></h1>
+			<h2>projetos</h2>
+		</div>
+		<div style="vertical-align:top; width:250px; height: auto; display: inline-block; border: 0px solid #7AA93C; padding: 10px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; background-color: #fff; margin-left: 15px; -webkit-box-shadow: 1px 1px 4px 0px rgba(50, 50, 50, 0.25); -moz-box-shadow:    1px 1px 4px 0px rgba(50, 50, 50, 0.25); box-shadow:         1px 1px 4px 0px rgba(50, 50, 50, 0.25);">
+			<h1 style="font-size: 18px; padding: 0; margin: 0; color: #7AA93C; font-family: sans-serif,Arial,sans-serif">Atividades</h1><img id="id_img_ajax_loader_atividade" src="@{'/public/images/icon_ajax_loader.gif'}" height="13px" width="13px" align="right" style="display: none;" />
+			<h2 style="color: #303641; font-family: sans-serif,Arial,sans-serif; font-size: 10px; line-height: 2">em andamento</h2>
+			<hr style="border: none; height: 1px; color: #ccc; background-color: #ccc; padding: 0; margin: 3; size: 1px">
+			<ul id="id_box_atividade">
+				<li id="id_linha_atividade" style="margin-bottom: 10px; display: none;">
+					<h5 id="id_linha_atividade_projeto" style="font-family: Verdana,sans-serif; font-size: 11px; color: #666666; font-style: italic; font-weight: bold;"></h5>
+					<span id="id_linha_atividade_nome" style="font-family: Verdana,sans-serif; font-size: 10px; color:  #666666;">
+					</span><br/><img src="@{'/public/images/icon_check.png'}" height="13px" width="13px" />&nbsp;<i id="id_linha_atividade_usuario" style="font-size: 10px;"></i>
+				</li>
+			</ul>
+		</div>
+		<div style="vertical-align:top; width:180px; height: auto; display: inline-block; border: 0px solid #7AA93C; padding: 10px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; background-color: #fff; margin-left: 15px; -webkit-box-shadow: 1px 1px 4px 0px rgba(50, 50, 50, 0.25); -moz-box-shadow:    1px 1px 4px 0px rgba(50, 50, 50, 0.25); box-shadow:         1px 1px 4px 0px rgba(50, 50, 50, 0.25);">
+			<h1 style="font-size: 18px; padding: 0; margin: 0; color: #174574; font-family: sans-serif,Arial,sans-serif">Usuarios</h1><a href="#" onclick="getUsuariosSemAtividade();"><img id="id_img_ajax_loader_usuario_semDemanda" src="@{'/public/images/icon_reload.gif'}" height="13px" width="13px" align="right"/></a>
+			<h2 style="color: #303641; font-family: sans-serif,Arial,sans-serif; font-size: 10px; line-height: 2">sem demanda</h2>
+			<hr style="border: none; height: 1px; color: #ccc; background-color: #ccc; padding: 0; margin: 3; size: 1px">
+			<ul id="id_box_usuario_semDemanda" style="padding: 0; max-height: 15em; overflow-y: auto;">
+				<li id="id_linha_usuario_semDemanda" style="margin-bottom: 10px; display: none;">
+					<h5 id="id_linha_usuario_semDemanda_nome" style="font-family: Verdana,sans-serif; font-size: 11px; color: #666666; font-style: italic; font-weight: bold;"></h5>
+					<span style="font-family: Verdana,sans-serif; font-size: 10px; color:  #666666;">
+						<b id="id_linha_usuario_semDemanda_qtdAtividadeFinalizadas" style="color: #7F8FA0"></b>&nbsp;Atividades concluídas<br/>
+					</span>
+				</li>
+			</ul>
+			<ul style="padding: 0;">
+				<li>
+					<a href="" class="btn btn-sm btn-success">Atribuir</a>
+				</li>			
+			</ul>
+		</div>
+		<div style="vertical-align:top; width:180px; height: auto; display: inline-block; border: 0px solid #7AA93C; padding: 10px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; background-color: #fff; margin-left: 15px; -webkit-box-shadow: 1px 1px 4px 0px rgba(50, 50, 50, 0.25); -moz-box-shadow:    1px 1px 4px 0px rgba(50, 50, 50, 0.25); box-shadow:         1px 1px 4px 0px rgba(50, 50, 50, 0.25);">
+			<h1 style="font-size: 18px; padding: 0; margin: 0; color: #3F444E; font-family: sans-serif,Arial,sans-serif">Iterações</h1><a href="#" onclick="recuperaIteracoesVencendo();"><img id="id_img_ajax_loader_iteracao_vencendo" src="@{'/public/images/icon_reload.gif'}" height="13px" width="13px" align="right"/></a>
+			<h2 style="color: #303641; font-family: sans-serif,Arial,sans-serif; font-size: 10px; line-height: 2">a serem finalizadas</h2>
+			<hr style="border: none; height: 1px; color: #ccc; background-color: #ccc; padding: 0; margin: 3; size: 1px">
+			<ul id="id_box_iteracao_vencendo" style="padding: 0; max-height: 15em; overflow-y: auto;">
+				<li id="id_linha_iteracao_vencendo" style="margin-bottom: 10px; display: none;">
+					<h5 id="id_linha_iteracao_vencendo_nomeProjeto" style="font-family: Verdana,sans-serif; font-size: 11px; color: #666666; font-style: italic; font-weight: bold;"></h5>
+					<span id="id_linha_iteracao_vencendo_nome"  style="font-family: Verdana,sans-serif; font-size: 10px; color:  #666666;">
+					</span><br/><b id="id_linha_iteracao_vencendo_qtdDiasRestantesFim" style="color: #3695D5; font-size: 10px;">5</b>&nbsp;<span style="font-size: 10px;color:  #666666;">Dias Restantes -</span> <i id="id_linha_iteracao_vencendo_dataFinal" style="font-size: 10px;color:  #666666;"></i>
+				</li>
+			</ul>
+			<ul style="padding: 0;">
+				<li>
+					<a href="#" onclick="abrirFuncionalidade('http://localhost:9000/conabscrum/admin/iteracoes', 'Cadastro de Iteração');" class="btn btn-sm btn-success">Adicionar</a>
+				</li>			
+			</ul>
+		</div>
+		<div style="vertical-align:top; width:346px; height: auto; display: inline-block; border: 0px solid #7AA93C; padding: 10px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; background-color: #fff; margin-left: 15px; -webkit-box-shadow: 1px 1px 4px 0px rgba(50, 50, 50, 0.25); -moz-box-shadow:    1px 1px 4px 0px rgba(50, 50, 50, 0.25); box-shadow:         1px 1px 4px 0px rgba(50, 50, 50, 0.25);">
+			<img src="@{'/public/images/img_apoena.gif'}" style="float: left; display: table-column; padding-right: 10px;">
+			<h1 style="font-size: 15px; font-weight:normal; padding: 0; margin: 0; color: #3996D5; font-family: sans-serif,Arial,sans-serif">Apoena Oliveira Machado</h1><img id="id_img_ajax_loader_atividade" src="@{'/public/images/icon_ajax_loader.gif'}" height="13px" width="13px" align="right" style="display: none;" />
+			<h2 style="color: #BAB6B6; font-family: sans-serif,Arial,sans-serif; font-size: 10px; line-height: 2">Desenvolvedor Java</h2>
+			<ul style="margin-top: 5px;">
+				<li class="btn-generico btn-vermelho"><b>05</b> <i>A fazer</i></li>
+				<li class="btn-generico btn-amarelo"><b>2</b> <i>Em progresso</i></li>
+				<li class="btn-generico btn-verde"><b>30</b> <i>Concluidas</i></li>
+			</ul>
+			<ul style="margin-top: 15px; width: 85%; float: right;">
+				<li id="id_linha_atividade" style="margin-bottom: 10px;">
+					<h5 id="id_linha_atividade_projeto" style="font-family: Verdana,sans-serif; font-size: 11px; color: #666666; font-style: italic; font-weight: bold;">Sigpaa Comunicação SIGEST</h5>
+					<span id="id_linha_atividade_nome" style="font-family: Verdana,sans-serif; font-size: 10px; color:  #666666;">
+					Correção valor total proposta PAA</span>
+				</li>
+			</ul>
+		</div>
+	</section>
+
+	<section class="section">
+		<article>
+			<header>
+				<p></p>
+			</header>
+			<p>
+				
+			</p>
+		</article>
+	</section>
+</div>

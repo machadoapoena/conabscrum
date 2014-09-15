@@ -1,0 +1,8 @@
+CompilerOracle: exclude jregex/Pretokenizer.next
+Listening for transport dt_socket at address: 8000
+13:34:18,756 INFO  ~ Starting /home/apoena.machado/workspace/conabcrum
+13:34:18,761 INFO  ~ Module crud is available (/opt/play-1.2.7/modules/crud)
+13:34:19,340 WARN  ~ You're running Play! in DEV mode
+13:34:19,406 INFO  ~ Listening for HTTP on port 9000 (Waiting a first request to start) ...
+~ Server is up and running
+13:34:25,325 INFO  ~ Application 'Conab Scrum' is now started !

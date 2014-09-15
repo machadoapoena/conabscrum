@@ -1,0 +1,42 @@
+#{extends 'CRUD/layout.html' /}
+#{set title:messages.get('crud.blank.title', type.modelName) /}
+<div id="crudBlank" class="${type.name}">
+    <div class="objectForm">
+    #{form action:@create(), enctype:'multipart/form-data'}
+        #{crud.form}
+			#{crud.custom 'iteracao'}
+					<span class="formulariotxt">
+						<label for="addressType">
+		            		&{'iteracao'}
+		        		</label>
+		        	</span>
+					#{select 'object.iteracao.id', class:'combobox', value:object.iteracao?.id}
+						#{option}&{'crud.selectValue'}#{/option}
+						#{if controllers.Seguranca.isScrumMaster()}
+							#{set list:models.Iteracao.recuperaIteracaoPorScrumMaster(session.username)/}
+						#{/if}
+						#{if controllers.Seguranca.isGerente()}
+							#{set list:models.Iteracao.recuperaIteracaoPorGerente(session.username)/}
+						#{/if}
+						#{if controllers.Seguranca.isGestor()}
+							#{set list:models.Iteracao.findAll()/}
+						#{/if}
+						#{list items:list, as:'iteracao'}
+							#{option iteracao.id}${iteracao}#{/option}
+						#{/list}
+					#{/select}
+				    #{ifError 'object.iteracao'}
+				        <span class="error">#{error 'object.iteracao' /}</span>
+				    #{/ifError}
+				    <br />
+					<span class="crudHelp">&{'crud.help.required'}</span>
+			#{/crud.custom}
+		 #{/crud.form}
+        <p class="crudButtons" style="position: fixed; left:0px; right:0px; bottom: 0px;">
+            <input type="submit" name="_save" value="&{'crud.save', type.modelName}" />
+            <input type="submit" name="_saveAndContinue" value="&{'crud.saveAndContinue', type.modelName}" />
+            <input type="submit" name="_saveAndAddAnother" value="&{'crud.saveAndAddAnother', type.modelName}" />
+        </p>
+    #{/form}
+    </div>
+</div>

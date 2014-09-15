@@ -1,0 +1,30 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+*     	/                                       			publico.HomeController.index
+GET    	/filtro/projeto/{id}                                publico.HomeController.selecionaProjeto
+GET     /projeto/quantidade.json          					publico.ProjetoRestService.getQuantidade
+GET     /webservice/atividade/atividadeEmProgresso.json     publico.AtividadeRestService.getAtividadesEmProgresso
+POST    /webservice/atividade/{idAtividade}/{situacao}      publico.AtividadeRestService.atualizaSituacao
+GET     /webservice/atividade/atividadeSemUsuario.json      publico.AtividadeRestService.getAtividadesSemUsuario
+GET     /webservice/usuario/usuariosSemAtividade.json     	publico.UsuarioRestService.getUsuariosSemAtividade
+GET     /webservice/iteracao/iteracoesVencendo.json     	publico.IteracaoRestService.recuperaIteracoesVencendo
+GET     /webservice/mensagem/mensagensParaUsuario.json     	publico.MensagemRestService.getMensagensUsuario
+#GET     /                                       Application.index
+GET     /admin/usuario                          			Usuario.list
+GET     /admin/projeto/grafico/atividades                          	Projetos.visualizarGrafico
+
+GET		/logout         									Secure.logout
+
+# Ignore favicon requests
+GET     /favicon.ico                           	 			404
+
+# Map static resources from the /app/public folder to the /public path
+GET     /public/                                			staticDir:public
+
+# Rota Administrativo
+*		/admin              								module:crud
+# Catch all
+*       /{controller}/{action}                  			{controller}.{action}

@@ -1,0 +1,503 @@
+#{extends 'layout.html' /}
+#{set title:'Home' /}
+<script type="text/javascript">
+	toastr.options = {
+		  "closeButton": true,
+		  "debug": false,
+		  "positionClass": "toast-bottom-right",
+		  "onclick": null,
+		  "showDuration": "300",
+		  "hideDuration": "1000",
+		  "timeOut": "13000",
+		  "extendedTimeOut": "1000",
+		  "showEasing": "swing",
+		  "hideEasing": "linear",
+		  "showMethod": "fadeIn",
+		  "hideMethod": "fadeOut"
+	}
+	var listAction = #{jsAction @publico.ProjetoRestService.getQuantidade() /}
+	function getQtdProjetos() {
+	    $.get("/conabscrum/projeto/quantidade.json", function(data) {
+	    	if (data > 9){
+	    		$("#id_qtd_projetos").html(data);
+	    	} else {
+	    		$("#id_qtd_projetos").html("0"+data);
+	    	}
+	        //$.each(data, function(index, item) {
+	        	//alert(index);
+	        	//alert(item);
+	           // $("#bars").append("<li>Bar " + item.name + "</li>");
+	       // });
+	    });
+	}
+    function getAtividadesEmProgresso() {
+    	$("#id_box_atividade").find("li").not(':first').remove();
+    	//$("#id_box_atividade").find("li").not(':first').not(':last').remove();    	
+    	$("#id_img_ajax_loader_atividade").css("display","block");
+        $.get("/conabscrum/webservice/atividade/atividadeEmProgresso.json", function(data) {
+            $.each(data, function(index, item) {
+            	var $tableBody = $('#id_box_atividade').find("li:last");
+            	var $tableBodyFirst = $('#id_box_atividade').find("li:first");
+            	$trNew = $tableBodyFirst.clone();
+            	$trNew.children("#id_linha_atividade_projeto").text(item.nomeProjeto);
+            	$trNew.children("#id_linha_atividade_nome").text(item.titulo);
+            	$trNew.children("#id_linha_atividade_usuario").text(item.nomeUsuario);
+            	$trNew.hide().fadeIn('slow');
+            	$tableBody.after($trNew);
+            	//$trNew.show();
+               //$("#bars").append("<li>Bar " + item.name + "</li>");
+           	});
+            $("#id_img_ajax_loader_atividade").css("display","none");
+        });
+       // toastr.info(Math.floor((Math.random() * 10) + 1)+" Mensagens Novas", "ConabScrum");
+    }
+    
+    function getAtividadesSemUsuario() {
+    	$("#id_box_atividade_sem_usuario").find("li").not(':first').remove();
+    	$("#id_img_ajax_loader_atividade_sem_usuario").css("display","block");
+        $.get("/conabscrum/webservice/atividade/atividadeSemUsuario.json", function(data) {
+        	var action = #{jsAction @Atividades.show(':id') /};
+            $.each(data, function(index, item) {
+            	var $tableBody = $('#id_box_atividade_sem_usuario').find("li:last");
+            	var $tableBodyFirst = $('#id_box_atividade_sem_usuario').find("li:first");
+            	$trNew = $tableBodyFirst.clone();
+            	$trNew.children("#id_linha_atividade_sem_usuario_projeto").text(item.nomeProjeto);
+            	$trNew.children("#id_linha_atividade_sem_usuario_nome").text(item.titulo);
+            	href = action({id: item.id});
+            	$trNew.children("#id_linha_atividade_sem_usuario_link").attr("onclick", "abrirFuncionalidade('"+href+"', 'Cadastro de Atividades');");
+            	$trNew.hide().fadeIn('slow');
+            	$tableBody.after($trNew);
+           	});
+            $("#id_img_ajax_loader_atividade_sem_usuario").css("display","none");
+        });
+    }
+    
+    function getMensagensParaUsuario() {
+    	$("#id_box_acontece").find("li").not(':first').remove();
+    	$("#id_img_ajax_loader_acontece").css("display","block");
+        $.get("/conabscrum/webservice/mensagem/mensagensParaUsuario.json", function(data) {
+        	console.log(data);
+            $.each(data, function(index, item) {
+            	var $tableBody = $('#id_box_acontece').find("li:last");
+            	var $tableBodyFirst = $('#id_box_acontece').find("li:first");
+            	$trNew = $tableBodyFirst.clone();
+            	$trNew.children("#id_linha_acontece_mensagem").text(item.mensagem.mensagem);
+            	if (item.lida){
+            		$trNew.children("#id_linha_acontece_mensagem").css("text-decoration" , "line-through");
+            		$trNew.children("#id_linha_acontece_checkbox").prop('checked', true);
+            	}
+            	$trNew.children("#id_linha_acontece_dataFormatada").text(item.mensagem.dataFormatada);
+            	$trNew.hide().fadeIn('slow');
+            	$tableBody.after($trNew);
+           	});
+            $("#id_img_ajax_loader_acontece").css("display","none");
+        });
+    }
+    
+    
+	
+    
+    #{ifErrors}
+    #{errors}
+    	toastr.info("${error}", "ConabScrum");
+    #{/errors}
+ 	#{/ifErrors}    
+ 	#{if flash.error}
+ 		toastr.options.timeOut = 0;
+    	toastr.error("${flash.error}", "ConabScrum");
+    #{/if} 	
+    #{if flash.warning}
+    	toastr.warning("${flash.warning}", "ConabScrum");
+    #{/if}
+    #{if flash.info}
+    	toastr.info("${flash.info}", "ConabScrum");
+    #{/if}
+    
+    function getUsuariosSemAtividade() {
+    	$("#id_box_usuario_semDemanda").find("li").not(':first').remove();
+    	//$("#id_img_ajax_loader_usuario_semDemanda").css("display","block");
+        $.get("/conabscrum/webservice/usuario/usuariosSemAtividade.json", function(data) {
+            $.each(data, function(index, item) {
+            	var $tableBody = $('#id_box_usuario_semDemanda').find("li:last");
+            	var $tableBodyFirst = $('#id_box_usuario_semDemanda').find("li:first");
+            	$trNew = $tableBodyFirst.clone();
+            	$trNew.children("#id_linha_usuario_semDemanda_nome").text(item.nome);
+            	$trNew.children().children("#id_linha_usuario_semDemanda_qtdAtividadeFinalizadas").text(item.qtdAtividadeFinalizadas);
+            	$trNew.hide().fadeIn('slow');
+            	$tableBody.after($trNew);
+           	});
+            //$("#id_img_ajax_loader_usuario_semDemanda").css("display","none");
+        });
+    }
+    function recuperaIteracoesVencendo() {
+    	$("#id_box_iteracao_vencendo").find("li").not(':first').remove();
+        $.get("/conabscrum/webservice/iteracao/iteracoesVencendo.json", function(data) {
+            $.each(data, function(index, item) {
+            	var $tableBody = $('#id_box_iteracao_vencendo').find("li:last");
+            	var $tableBodyFirst = $('#id_box_iteracao_vencendo').find("li:first");
+            	$trNew = $tableBodyFirst.clone();
+            	$trNew.children("#id_linha_iteracao_vencendo_nomeProjeto").text(item.nomeProjeto);
+            	$trNew.children("#id_linha_iteracao_vencendo_nome").text(item.nome);
+            	$trNew.children("#id_linha_iteracao_vencendo_qtdDiasRestantesFim").text(item.qtdDiasRestantesFim);
+            	$trNew.children("#id_linha_iteracao_vencendo_dataFinal").text(item.dataFinalFormatad);
+            	$trNew.hide().fadeIn('slow');
+            	$tableBody.after($trNew);
+           	});
+        });
+    }    
+    
+$(document).ready(function() {
+	getQtdProjetos();
+    getAtividadesEmProgresso();
+    getAtividadesSemUsuario();
+    getUsuariosSemAtividade();
+    recuperaIteracoesVencendo();
+    getMensagensParaUsuario();
+	setInterval(getAtividadesEmProgresso, 10000);
+	//setInterval(recuperaIteracoesVencendo, 15000);
+	setInterval(getAtividadesSemUsuario, 15000);
+	setInterval(getMensagensParaUsuario, 7000);
+});   
+</script>
+<style>
+ div.green {
+            background-color: #E14F4E;
+            border-color: #E14F4E;
+        }
+</style>
+<script type="text/javascript">
+        var timeline;
+        google.load("visualization", "1");
+        // Set callback to run when API is loaded
+        google.setOnLoadCallback(drawVisualization);
+        // Called when the Visualization API is loaded.
+        function drawVisualization() {
+            // Create and populate a data table.
+            var data = new google.visualization.DataTable();
+            data.addColumn('datetime', 'start');
+            data.addColumn('datetime', 'end');
+            data.addColumn('string', 'content');
+            data.addColumn('string', 'className');
+            data.addRows([
+                //[new Date(2010,7,23), , 'Sigpaa - Produção<br>Manter Exec. Orçam. e Financeira do PAA<br>Apoen Oliveira Machado',''],
+                //[new Date(2010,7,23,23,0,0), , '<b>Entrega de Produto:</b> SISCOI V2.0', 'green'],
+                //[new Date(2010,7,24,16,0,0), , 'Relatorio Semanal',''],
+                [new Date(2014,8,14), new Date(2014,8,30), 'Projeto 1 - Iteracao 01',''],
+               // [new Date(2010,7,28), , 'Sigpaa - Produção<br>Manter Exec. Orçam. e Financeira do PAA<br>Apoen Oliveira Machado',''],
+               // [new Date(2010,7,29), , 'Sigpaa - Produção<br>Manter Exec. Orçam. e Financeira do PAA<br>Apoen Oliveira Machado',''],
+                [new Date(2014,8,20), new Date(2014,8,30), 'Projeto 2 - Iteracao 02','']
+                //[new Date(2010,8,4,12,0,0), , 'Relatorio Mensal','']
+            ]);
+            // specify options
+            var options = {
+                "width":  "100%",
+                "height": "180px",
+                "style": "box"
+            };
+            // Instantiate our timeline object.
+            timeline = new links.Timeline(document.getElementById('mytimeline'), options);
+            // Draw our timeline with the created data and options
+            timeline.draw(data);
+        }
+			
+
+		function abrirFuncionalidade(url, titulo, largura, altura) {
+			if(!largura) {
+				largura = 1200;
+			}
+			if(!altura) {
+				altura = 500;
+			}			
+        	new $.Zebra_Dialog('', {
+        	     source:  {'iframe': {
+        	    	'src': url, 
+        	    	'height': altura
+        	     }}, 
+        	     width: largura,
+        	     'buttons':  false,
+        	     'onClose':  function(caption) {
+        	    	 console.log(url);
+        	    	 if (url == "@{Projetos.list}" || url == "@{Projetos.blank}"){
+        	    		 getMensagensParaUsuario();
+        	    	 }
+        	    	 if (url.contains("/admin/iteracoes")){
+        	    		 recuperaIteracoesVencendo();
+        	    	 }
+           	    	 if (url.contains("/admin/atividades")){
+           	    	    getAtividadesEmProgresso();
+           	    	    getAtividadesSemUsuario();
+        	    	 }
+        	     },
+        	     title: titulo
+        	});
+		}
+		
+		function crudSalvar(){
+			$(document).find('iframe').contents().find("input[name='_save']").click();
+		}
+		function crudSalvarContinuarEditando(){
+			$(document).find('iframe').contents().find("input[name='_saveAndContinue']").click();
+		}
+		function crudSalvarCriarOutro(){
+			$(document).find('iframe').contents().find("input[name='__saveAndAddAnother']").click();
+		}
+    </script>
+    
+<div class="container">
+	<div style="margin-bottom: 10px; display: inline-block; vertical-align: top">
+		<img src="@{'/public/images/img_conabscrum.png'}"/>
+	</div>
+	<div style="margin-bottom: 10px; margin-top: 10px; display: inline-block; float: right; vertical-align: top">
+		<select id="demo-htmlselect"></select><br/>
+	    <script>
+		    var ddBasic = [
+						#{if controllers.Seguranca.isScrumMaster()}
+							#{set list:models.Projeto.recuperaProjetosPorScrumMaster(session.username)/}
+						#{/if}
+						#{if controllers.Seguranca.isGerente()}
+							#{set list:models.Projeto.recuperaProjetosPorGerente(session.username)/}
+						#{/if}
+						#{if controllers.Seguranca.isGestor()}
+							#{set list:models.Projeto.findAll()/}
+						#{/if}
+		           		#{list items:list, as:'projeto' }
+							#{if projeto_index == 1}
+								{ text: "Todo os Projetos", value: 0 ,  ${session.identificadorProjetoId == null || session.identificadorProjetoId == '0' ? "selected: true" : "selected: false"  } },
+							#{/if}
+		           			#{if projeto_isLast}
+		           				{ text: "${projeto}", value: ${projeto.id}, ${session.identificadorProjetoId == String.valueOf(projeto.id) ? "selected: true" : "selected: false"  } }
+		           			#{/if}
+		           			#{else}
+		           				{ text: "${projeto}", value: ${projeto.id}, ${session.identificadorProjetoId == String.valueOf(projeto.id) ? "selected: true" : "selected: false"  } },
+		           			#{/else}
+		    	    	#{/list}
+		    	    	#{else}
+		    	    		{ text: "Nenhum Projeto", value: 0 ,  ${session.identificadorProjetoId == null || session.identificadorProjetoId == '0' ? "selected: true" : "selected: false"  } }
+		    	    	#{/else}
+		               ];
+             $('#demo-htmlselect').ddslick({
+                 data: ddBasic,
+                 background: '#ffffff',
+                 onSelected: function(selectedData){
+                	 var action = #{jsAction @publico.HomeController.selecionaProjeto(':id') /};
+                	 #{if session.identificadorProjetoId == null}
+                	 	${session.put("identificadorProjetoId", 0)}
+                	 #{/if}
+	               	 if(selectedData.selectedData.value != ${session.identificadorProjetoId}) {
+              			window.location.href = action({id: selectedData.selectedData.value});
+	               	 }
+                 }   
+             });    
+	    </script>
+	</div>
+	<div style="width: 100%; color: #fff; height: 2px; background-color: #8BBF61;"></div>
+	<header class="header">
+			<nav>
+				<ul>
+					<li>
+						<a href="@{publico.HomeController.index}" title="Home">Home</a>
+					</li>
+					#{secure.check [dominio.TipoPerfilEnum.GESTOR,dominio.TipoPerfilEnum.GERENTE]}
+					<li class="dropdown">
+						<a class="ddIcon" href="#" title="Products">Projetos</a>
+						<div class="subNav">
+							<!--<div class="navSection">
+								<h4><a href="#"> &{'menu.favoritos'}<span onclick="abrirFuncionalidade('@{Projetos.list}', 'Cadastro de Projeto');">(&{'menu.verTodos'})</span></a></h4>
+								<a href="" title="">Sigpaa Produção</a>
+							</div>-->
+							<div class="navSection">
+								<h4><a href="#"> &{'menu.acoes'}</a></h4>
+								<a href="#" onclick="abrirFuncionalidade('@{Projetos.blank}', 'Cadastro de Projeto');" title="Novo Projeto">&{'menu.novo'}</a>
+								<a href="#" onclick="abrirFuncionalidade('@{Projetos.list}', 'Cadastro de Projeto');" title="Listar Projetos">&{'menu.listar'}</a>
+							</div>
+						</div>
+					</li>
+					#{/secure.check}
+					#{secure.check [dominio.TipoPerfilEnum.GESTOR,dominio.TipoPerfilEnum.GERENTE,dominio.TipoPerfilEnum.SCRUMMASTER]}
+					<li class="dropdown">
+						<a class="ddIcon" href="#" title="Iterações">Iterações</a>
+						<div class="subNav">
+							<div class="navSection">
+								<h4><a href="#"> &{'menu.acoes'}</a></h4>
+								<a href="#" onclick="abrirFuncionalidade('@{Iteracoes.blank}', 'Cadastro de Iteração');" title="Nova Iteração">&{'menu.novo'}</a>
+								<a href="#" onclick="abrirFuncionalidade('@{Iteracoes.list}', 'Cadastro de Iteração');" title="Listas Iterações">&{'menu.listar'}</a>
+							</div>
+						</div>
+					</li>
+					#{/secure.check}
+					#{secure.check [dominio.TipoPerfilEnum.GESTOR,dominio.TipoPerfilEnum.GERENTE,dominio.TipoPerfilEnum.SCRUMMASTER]}
+					<li class="dropdown">
+						<a class="ddIcon" href="#" title="Backlog">Backlogs</a>
+						<div class="subNav">
+							<div class="navSection">
+								<h4><a href="#"> &{'menu.acoes'}</a></h4>
+								<a href="#" onclick="abrirFuncionalidade('@{Backlogs.blank}', 'Cadastro de Backlog');" title="Novo Backlog">&{'menu.novo'}</a>
+								<a href="#" onclick="abrirFuncionalidade('@{Backlogs.list}', 'Cadastro de Backlog');" title="Listas Iterações">&{'menu.listar'}</a>
+							</div>
+						</div>
+					</li>
+					#{/secure.check}
+					<li class="dropdown">
+						<a class="ddIcon" href="#" title="Backlog">Atividades</a>
+						<div class="subNav">
+							<div class="navSection">
+								<h4><a href="#"> &{'menu.acoes'}</a></h4>
+								<a href="#" onclick="abrirFuncionalidade('@{Atividades.blank}', 'Cadastro de Atividade');" title="Nova Atividade">&{'menu.novo'}</a>
+								<a href="#" onclick="abrirFuncionalidade('@{Atividades.list}', 'Cadastro de Atividade');" title="Listas Atividades">&{'menu.listar'}</a>
+							</div>
+						</div>
+					</li>
+					<li class="dropdown">
+						<a class="ddIcon" href="#" title="Relatorios">Relatorios</a>
+						<div class="subNav">
+							<div class="navSection">
+								<h4><a href="#"> Gerencial<span>(view all)</span></a></h4>
+								#{a @RelatoriosGestor.imprimirProjetosPorGerente('XLS', '')}Projetos Por Gerente#{/a}
+								#{a @RelatoriosGestor.imprimirProjetosAtividadeGrafico('XLS')}Projetos Atividade Gr�fico#{/a}
+								<a href="" title="Apple Iphone 4S">Usuários sem demanda</a>
+							</div>
+						</div>
+					</li>
+					<li class="dropdown">
+						<a class="ddIcon" href="#" title="Services">Serviços</a>
+							<div class="subNav">
+								<div class="navSection">
+									<h4><a href="#">Programados</a></h4>
+									<a href="" title="">Limpeza base de dados</a>
+								</div>
+								<div class="navSection">
+									<h4><a href="#"> Otimização</a></h4>
+									<a href="" title="Google Nexus 7">Code Optimization</a>
+									<a href="" title="Apple IPAD">Outbound Linking</a>
+								</div>
+
+						</div>
+					</li>
+					<li>
+						<a href="#" onclick="abrirFuncionalidade('@{Kanban.exibirQuadro}', '&{'menu.kanban'}',1250,600);" title="&{'menu.kanban'}">&{'menu.kanban'}</a>
+					</li>
+					<li><a href="#" title="Contato">Contato</a></li>
+					<li>
+						<a href="#" title="Home">Perfil</a>
+					</li>
+					<li style="float: right;">
+						<a href="@{Secure.logout ()}" title="Sair do Sistema" style="color: #E14F4E">Sair</a>
+					</li>
+				</ul>
+			</nav>
+	</header><!-- / .header -->
+	<section class="section" style="padding-left: 0px">
+		<article>
+			<header>
+				<div style="display: inline-block;">
+					<p style="color: #666; display: block; font-family: Open Sans,sans-serif; font-size: 25px; font-weight: 300; letter-spacing: -1px; margin: 0 0 15px; padding: 0;">
+						Gerenciamento Scrum
+					</p>
+				</div>
+			</header>
+		</article>
+		<!--<div id="mytimeline"></div><br>
+		 <div style="vertical-align:top; display: inline-block; border: 1px solid #D4D4D4; padding: 40px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; background-color: #fff">
+			<h1 style="font-size: 60px; padding: 0; margin: 0; color: #174574" id="id_qtd_projetos"></h1>
+			<h2>projetos</h2>
+		</div>-->
+		<div style="vertical-align:top; width:250px; height: auto; display: inline-block; border: 0px solid #7AA93C; padding: 10px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; background-color: #fff; margin-left: 0px; -webkit-box-shadow: 1px 1px 4px 0px rgba(50, 50, 50, 0.25); -moz-box-shadow:    1px 1px 4px 0px rgba(50, 50, 50, 0.25); box-shadow:         1px 1px 4px 0px rgba(50, 50, 50, 0.25);">
+			<h1 style="font-size: 18px; padding: 0; margin: 0; color: #7AA93C; font-family: sans-serif,Arial,sans-serif">Atividades</h1><img id="id_img_ajax_loader_atividade" src="@{'/public/images/icon_ajax_loader.gif'}" height="13px" width="13px" align="right" style="display: none;" />
+			<h2 style="color: #303641; font-family: sans-serif,Arial,sans-serif; font-size: 10px; line-height: 2">em andamento</h2>
+			<hr style="border: none; height: 1px; color: #ccc; background-color: #ccc; padding: 0; margin: 3; size: 1px">
+			<ul id="id_box_atividade">
+				<li id="id_linha_atividade" style="margin-bottom: 10px; display: none;">
+					<h5 id="id_linha_atividade_projeto" style="font-family: Verdana,sans-serif; font-size: 11px; color: #666666; font-style: italic; font-weight: bold;"></h5>
+					<span id="id_linha_atividade_nome" style="font-family: Verdana,sans-serif; font-size: 10px; color:  #666666;">
+					</span><br/><img src="@{'/public/images/icon_check.png'}" height="13px" width="13px" />&nbsp;<i id="id_linha_atividade_usuario" style="font-size: 10px;"></i>
+				</li>
+			</ul>
+		</div>
+		<div style="vertical-align:top; width:250px; height: auto; display: inline-block; border: 0px solid #7AA93C; padding: 10px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; background-color: #fff; margin-left: 10px; -webkit-box-shadow: 1px 1px 4px 0px rgba(50, 50, 50, 0.25); -moz-box-shadow:    1px 1px 4px 0px rgba(50, 50, 50, 0.25); box-shadow:         1px 1px 4px 0px rgba(50, 50, 50, 0.25);">
+			<h1 style="font-size: 18px; padding: 0; margin: 0; color: #7AA93C; font-family: sans-serif,Arial,sans-serif">Atividades</h1><img id="id_img_ajax_loader_atividade_sem_usuario" src="@{'/public/images/icon_ajax_loader.gif'}" height="13px" width="13px" align="right" style="display: none;" />
+			<h2 style="color: #303641; font-family: sans-serif,Arial,sans-serif; font-size: 10px; line-height: 2">Sem usuarios</h2>
+			<hr style="border: none; height: 1px; color: #ccc; background-color: #ccc; padding: 0; margin: 3; size: 1px">
+			<ul id="id_box_atividade_sem_usuario" style="padding: 0px 5px 0px 0px; max-height: 15em; overflow-y: auto;">
+				<li id="id_linha_atividade_sem_usuario" style="margin-bottom: 10px; display: none;">
+					<h5 id="id_linha_atividade_sem_usuario_projeto" style="font-family: Verdana,sans-serif; font-size: 11px; color: #666666; font-style: italic; font-weight: bold;"></h5>
+					<span id="id_linha_atividade_sem_usuario_nome" style="font-family: Verdana,sans-serif; font-size: 10px; color:  #666666;">
+					</span><a id="id_linha_atividade_sem_usuario_link" href="#" class="btnAdicionar" style="float: right;">+</a>
+				</li>
+			</ul>
+		</div>
+		<div style="vertical-align:top; width:180px; height: auto; display: inline-block; border: 0px solid #7AA93C; padding: 10px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; background-color: #fff; margin-left: 10px; -webkit-box-shadow: 1px 1px 4px 0px rgba(50, 50, 50, 0.25); -moz-box-shadow:    1px 1px 4px 0px rgba(50, 50, 50, 0.25); box-shadow:         1px 1px 4px 0px rgba(50, 50, 50, 0.25);">
+			<h1 style="font-size: 18px; padding: 0; margin: 0; color: #174574; font-family: sans-serif,Arial,sans-serif">Usuarios</h1><a href="#" onclick="getUsuariosSemAtividade();"><img id="id_img_ajax_loader_usuario_semDemanda" src="@{'/public/images/icon_reload.gif'}" height="13px" width="13px" align="right"/></a>
+			<h2 style="color: #303641; font-family: sans-serif,Arial,sans-serif; font-size: 10px; line-height: 2">sem demanda</h2>
+			<hr style="border: none; height: 1px; color: #ccc; background-color: #ccc; padding: 0; margin: 3; size: 1px">
+			<ul id="id_box_usuario_semDemanda" style="padding: 0; max-height: 15em; overflow-y: auto;">
+				<li id="id_linha_usuario_semDemanda" style="margin-bottom: 10px; display: none;">
+					<h5 id="id_linha_usuario_semDemanda_nome" style="font-family: Verdana,sans-serif; font-size: 11px; color: #666666; font-style: italic; font-weight: bold;"></h5>
+					<span style="font-family: Verdana,sans-serif; font-size: 10px; color:  #666666;">
+						<b id="id_linha_usuario_semDemanda_qtdAtividadeFinalizadas" style="color: #7F8FA0"></b>&nbsp;Atividades concluídas<br/>
+					</span>
+				</li>
+			</ul>
+			<ul style="padding: 0;">
+				<li>
+					<a href="" class="btn btn-sm btn-success">Atribuir</a>
+				</li>			
+			</ul>
+		</div>
+		<div style="vertical-align:top; width:180px; height: auto; display: inline-block; border: 0px solid #7AA93C; padding: 10px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; background-color: #fff; margin-left: 10px; -webkit-box-shadow: 1px 1px 4px 0px rgba(50, 50, 50, 0.25); -moz-box-shadow:    1px 1px 4px 0px rgba(50, 50, 50, 0.25); box-shadow:         1px 1px 4px 0px rgba(50, 50, 50, 0.25);">
+			<h1 style="font-size: 18px; padding: 0; margin: 0; color: #3F444E; font-family: sans-serif,Arial,sans-serif">Iterações</h1><a href="#" onclick="recuperaIteracoesVencendo();"><img id="id_img_ajax_loader_iteracao_vencendo" src="@{'/public/images/icon_reload.gif'}" height="13px" width="13px" align="right"/></a>
+			<h2 style="color: #303641; font-family: sans-serif,Arial,sans-serif; font-size: 10px; line-height: 2">a serem finalizadas</h2>
+			<hr style="border: none; height: 1px; color: #ccc; background-color: #ccc; padding: 0; margin: 3; size: 1px">
+			<ul id="id_box_iteracao_vencendo" style="padding: 0; max-height: 15em; overflow-y: auto;">
+				<li id="id_linha_iteracao_vencendo" style="margin-bottom: 10px; display: none;">
+					<h5 id="id_linha_iteracao_vencendo_nomeProjeto" style="font-family: Verdana,sans-serif; font-size: 11px; color: #666666; font-style: italic; font-weight: bold;"></h5>
+					<span id="id_linha_iteracao_vencendo_nome"  style="font-family: Verdana,sans-serif; font-size: 10px; color:  #666666;">
+					</span><br/><b id="id_linha_iteracao_vencendo_qtdDiasRestantesFim" style="color: #3695D5; font-size: 10px;">5</b>&nbsp;<span style="font-size: 10px;color:  #666666;">Dias Restantes -</span> <i id="id_linha_iteracao_vencendo_dataFinal" style="font-size: 10px;color:  #666666;"></i>
+				</li>
+			</ul>
+			<ul style="padding: 0;">
+				<li>
+					<a href="#" onclick="abrirFuncionalidade('@{Iteracoes.blank}', 'Cadastro de Iteração');" class="btn btn-sm btn-success">Adicionar</a>
+				</li>			
+			</ul>
+		</div>
+		<div style="vertical-align:top; width:330px; height: auto; display: inline-block; border: 0px solid #7AA93C; padding: 10px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; background-color: #fff; margin-left: 10px; -webkit-box-shadow: 1px 1px 4px 0px rgba(50, 50, 50, 0.25); -moz-box-shadow:    1px 1px 4px 0px rgba(50, 50, 50, 0.25); box-shadow:         1px 1px 4px 0px rgba(50, 50, 50, 0.25);">
+			<h1 style="font-size: 18px; padding: 0; margin: 0; color: #3996D5; font-family: sans-serif,Arial,sans-serif">Acontece na SUTIN</h1><img id="id_img_ajax_loader_acontece" src="@{'/public/images/icon_ajax_loader.gif'}" height="13px" width="13px" align="right" style="display: none;" />
+			<h2 style="color: #303641; font-family: sans-serif,Arial,sans-serif; font-size: 10px; line-height: 2">O que anda sendo realizado</h2>
+			<hr style="border: none; height: 1px; color: #ccc; background-color: #ccc; padding: 0; margin: 3; size: 1px">
+			<ul id="id_box_acontece" style="padding: 0px 5px 0px 0px; max-height: 15em; overflow-y: auto;">
+				<li id="id_linha_acontece" style="margin-bottom: 10px; display: none;">
+					<span id="id_linha_acontece_mensagem" style="font-family: Verdana,sans-serif; font-size: 10px; color:  #666666;">
+					</span><br/><i id="id_linha_acontece_dataFormatada" style="font-size: 10px;"></i><!--<img src="@{'/public/images/icon_evolution_mail.png'}" height="17px" width="17px" align="right"/> --><input id="id_linha_acontece_checkbox" type="checkbox" style="float: right;"/>
+				</li>
+			</ul>
+		</div>
+		<!--<div style="vertical-align:top; width:346px; height: auto; display: inline-block; border: 0px solid #7AA93C; padding: 10px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; background-color: #fff; margin-left: 10px; -webkit-box-shadow: 1px 1px 4px 0px rgba(50, 50, 50, 0.25); -moz-box-shadow:    1px 1px 4px 0px rgba(50, 50, 50, 0.25); box-shadow:         1px 1px 4px 0px rgba(50, 50, 50, 0.25);">
+			<img src="@{'/public/images/img_apoena.gif'}" style="float: left; display: table-column; padding-right: 10px;">
+			<h1 style="font-size: 15px; font-weight:normal; padding: 0; margin: 0; color: #3996D5; font-family: sans-serif,Arial,sans-serif">Apoena Oliveira Machado</h1><img id="id_img_ajax_loader_atividade" src="@{'/public/images/icon_ajax_loader.gif'}" height="13px" width="13px" align="right" style="display: none;" />
+			<h2 style="color: #BAB6B6; font-family: sans-serif,Arial,sans-serif; font-size: 10px; line-height: 2">Desenvolvedor Java</h2>
+			<ul style="margin-top: 5px;">
+				<li class="btn-generico btn-vermelho"><b>05</b> <i>A fazer</i></li>
+				<li class="btn-generico btn-amarelo"><b>2</b> <i>Em progresso</i></li>
+				<li class="btn-generico btn-verde"><b>30</b> <i>Concluidas</i></li>
+			</ul>
+			<ul style="margin-top: 15px; width: 85%; float: right;">
+				<li id="id_linha_atividade" style="margin-bottom: 10px;">
+					<h5 id="id_linha_atividade_projeto" style="font-family: Verdana,sans-serif; font-size: 11px; color: #666666; font-style: italic; font-weight: bold;">Sigpaa Comunicação SIGEST</h5>
+					<span id="id_linha_atividade_nome" style="font-family: Verdana,sans-serif; font-size: 10px; color:  #666666;">
+					Correção valor total proposta PAA</span>
+				</li>
+			</ul><br/><img src="admin/projeto/grafico/atividades"/>
+		</div>-->
+	</section>
+
+	<section class="section">
+		<article>
+			<header>
+				<p></p>
+			</header>
+			<p>
+				
+			</p>
+		</article>
+	</section>
+</div>
